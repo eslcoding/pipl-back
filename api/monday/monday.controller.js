@@ -3,11 +3,12 @@ const mondayService = require('./monday.service');
 // const { TRANSFORMATION_TYPES } = require('../constants/transformation');
 const axios = require('axios')
 const initMondayClient = require('monday-sdk-js');
+const token = process.env.MONDAY_API  
 
 
 // async function executeAction(req, res) {
 //   const { shortLivedToken } = req.session;
-//   const { payload } = req.body;
+  // const { payload } = req.body;
 
 //   try {
 //     const { inputFields } = payload;
@@ -62,39 +63,97 @@ async function getPrefixMap(req, res) {
 async function getWebHook(req, res) {
   const body = req.body
   if (!body?.event) return res.json({ 'challenge': body.challenge })
-  
-  const {  boardId, groupId, pulseId , columnId} = body.event
-  console.log('getWebHook -> boardId', boardId)
-  // console.log('getWebHook -> value', value)
-  const prefixMap = await mondayService.getPrefixMapByBoardId(boardId)
-  const token = process.env.MONDAY_API
-  const monday = initMondayClient()
-  monday.setToken(token)
-  console.log('heyasdaksdaksjdhakjsdasdadask');
-  
-  const query = `mutation {
-    change_simple_column_value (board_id: ${boardId}, item_id: ${pulseId}, column_id: ${prefixMap.targetColId}, value: ${JSON.stringify('100000')}) {
+  try {
+
+    const { boardId, groupId, pulseId, columnId, value } = body.event
+    const { label: { text } } = value
+    // console.log('getWebHook -> value', value)
+    const prefixMap = await mondayService.getPrefixMapByBoardId(boardId)
+    const nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
+    const monday = initMondayClient()
+    monday.setToken(token)
+
+    const query = `mutation {
+      change_simple_column_value (board_id: ${boardId}, item_id: ${pulseId}, column_id: ${prefixMap.targetColId}, value: ${JSON.stringify(nextPrefix)}) {
+        id
+      }
+    }`
+    const test = await monday.api(query)
+    await mondayService.updatePrefixMap(prefixMap)
+    res.end()
+  } catch (err) {
+    console.log('err: ', err);
+
+  }
+
+  // const query2 = `mutation {
+  //   create_item (board_id: ${boardId}, group_id: "${groupId}", item_name: "new item") {
+  //   id
+  //   }
+  //   }`
+  // await monday.api(query2)
+
+  // console.log('getWebHook -> challenge', challenge)
+  // axios.post('https://api-gw.monday.com/automations/automations', {challenge})
+}
+async function getWebHookItem(req, res) {
+  const body = req.body
+  if (!body?.event) return res.json({ 'challenge': body.challenge })
+  try {
+    // console.log('body.event: ', body.event);
+    const { boardId, pulseId: itemId } = body.event
+    const prefixMap = await mondayService.getPrefixMapByBoardId(boardId)
+    const monday = initMondayClient()
+    monday.setToken(token)
+
+    const query = `query {
+    boards(ids: ${boardId}) {
+      items(ids: ${itemId}) {
+        column_values(ids: ${prefixMap?.srcColId}) {
+          text
+        }
+      }
+    }
+  }`
+
+    const { data: { boards } } = await monday.api(query)
+    const items = boards[0].items
+    const { text } = items[0].column_values[0]
+    const nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
+    await mondayService.updatePrefixMap(prefixMap)
+
+    const query2 = `mutation {
+    change_simple_column_value (board_id: ${boardId}, item_id: ${itemId}, column_id: ${prefixMap.targetColId}, value: ${JSON.stringify(nextPrefix)}) {
       id
     }
   }`
-  const test = await monday.api(query)
-  console.log('getWebHook -> test', test)
-  const query2 = `mutation {
-    create_item (board_id: ${boardId}, group_id: "${groupId}", item_name: "new item") {
-    id
-    }
-    }`
-  await monday.api(query2)
-  
-  // console.log('getWebHook -> challenge', challenge)
-  // axios.post('https://api-gw.monday.com/automations/automations', {challenge})
+
+    let result = await monday.api(query2)
+    console.log('getWebHookItem -> result', result)
+    res.end()
+  } catch (err) {
+    console.log('err: ', err);
+
+  }
+
 }
-async function tryWebHooks(req, res) {
-  const testing = req.body
-  console.log('tryWebHooks -> testing', testing)
-  // console.log('getWebHook -> challenge', challenge)
-  // axios.post('https://api-gw.monday.com/automations/automations', {challenge})
+
+async function addColumn(req, res) {
+  const { query } = req.body
+  try {
+
+    const monday = initMondayClient()
+    monday.setToken(token)
+    let result = await monday.api(query)
+    return res.json(result)
+
+  } catch (error) {
+    console.log('error: ', error);
+
+  }
 }
+
+
 
 async function getPrefixMapByBoardId(req, res) {
   // const { boardId } = req.params
@@ -149,5 +208,6 @@ module.exports = {
   updatePrefixMap,
   getPrefixMapByBoardId,
   getWebHook,
-  tryWebHooks
+  getWebHookItem,
+  addColumn
 };

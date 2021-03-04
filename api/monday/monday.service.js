@@ -122,8 +122,10 @@ async function getPrefixMapByBoardId(boardId) {
 }
 
 
-
-
+function getNextPrefixCount(prefix, prefixMap) {
+  prefixMap.map[prefix] = (prefixMap.map[prefix]) ? prefixMap.map[prefix] + 1 : 1
+  return prefix + '-' + prefixMap.map[prefix]
+}
 
 
 async function addPrefixMap(prefixMap) {
@@ -164,13 +166,13 @@ async function addPrefixMap(prefixMap) {
 async function updatePrefixMap(prefixMap) {
   const collection = await dbService.getCollection('prefix')
   try {
-    const prefix = await collection.updateOne({ boardId: prefixMap.boardId }, { $set: {map: prefixMap.map } })
+    const prefix = await collection.updateOne({ boardId: prefixMap.boardId }, { $set: { map: prefixMap.map } })
     return prefix
   } catch (err) {
     console.log('ERROR: cannot update prefix')
     throw err;
   }
-  
+
   // return mongoService.connect()
   // .then(db => {
   //   const collection = db.collection('prefix');
@@ -193,7 +195,8 @@ module.exports = {
   getPrefixMap,
   updatePrefixMap,
   getPrefixMapByBoardId,
-  addPrefixMap
+  addPrefixMap,
+  getNextPrefixCount
 };
 
 

@@ -9,6 +9,7 @@ router.post('/test', mondayController.testFunc);
 router.post('/updatePrefixMap', mondayController.updatePrefixMap);
 // router.get('/getPrefixMap/:boardId', mondayController.getPrefixMapByBoardId);
 router.post('/getPrefixMap', mondayController.getPrefixMapByBoardId);
+router.post('/addColumn', mondayController.addColumn);
 // router.post('/automations/automations', mondayController.getPrefixMapByBoardId);
 
 module.exports = router;
