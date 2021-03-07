@@ -64,17 +64,33 @@ async function getInter(req, res) {
   const body = req.body
   console.log('getWebHook -> body', body)
   try {
-
+    const { shortLivedToken } = req.session
     const { boardId, itemId } = body.payload.inboundFieldValues
-    // const { label: { text } } = value
-    // console.log('getWebHook -> value', value)
     const prefixMap = await mondayService.getPrefixMapByBoardId(boardId)
-    // const nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
     const monday = initMondayClient()
-    monday.setToken(req.session.shortLivedToken)
+    monday.setToken(shortLivedToken)
+
+
+    const query = `query {
+      boards(ids: ${boardId}) {
+        items(ids: ${itemId}) {
+          column_values(ids: ${prefixMap?.srcColId}) {
+            text
+          }
+        }
+      }
+    }`
+
+    const { data: { boards } } = await monday.api(query)
+    const items = boards[0].items
+    const { text } = items[0].column_values[0]
+
+    const nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
+
+    // console.log('getWebHook -> value', value)
 
     const query = `mutation {
-      change_simple_column_value (board_id: ${boardId}, item_id: ${itemId}, column_id: ${prefixMap.targetColId}, value: ${JSON.stringify('asdasd')}) {
+      change_simple_column_value (board_id: ${boardId}, item_id: ${pulseId}, column_id: ${prefixMap.targetColId}, value: ${JSON.stringify(nextPrefix)}) {
         id
       }
     }`
