@@ -5,9 +5,7 @@ const config = require('../../config')
 
 
 async function authorization(req, res) {
-    let { userEmail } = req.params;
-    if (!userEmail) userEmail = 'aaa@gmail.com'
-    console.log('authorization -> userEmail', userEmail)
+ 
     // console.log('auth useremail', userEmail)
     // const user = await userService.getByEmail(userEmail);
     // console.log('getuser', user)
@@ -16,8 +14,7 @@ async function authorization(req, res) {
     // } else {
     // redirect to monday.com OAuth URL
     const query = new URLSearchParams({
-        client_id: config.monday.clientId,
-        state: userEmail
+        client_id: 'a9c01b6914acf9826da43164df5de5e8',
     });
     return res.redirect('https://auth.monday.com/oauth2/authorize?' +
         query.toString()
