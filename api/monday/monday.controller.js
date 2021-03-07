@@ -62,8 +62,12 @@ async function getPrefixMap(req, res) {
 
 async function getWebHook(req, res) {
   const body = req.body
+  console.log('req headerssssssssssssss: ', req.headers);
+  
   if (!body?.event) return res.json({ 'challenge': body.challenge })
   try {
+    // const testSession = req.session
+
 
     const { boardId, groupId, pulseId, columnId, value } = body.event
     const { label: { text } } = value
@@ -100,6 +104,7 @@ async function getWebHookItem(req, res) {
   const body = req.body
   if (!body?.event) return res.json({ 'challenge': body.challenge })
   try {
+    console.log('getWebHookItem -> testSession', testSession)
     // console.log('body.event: ', body.event);
     const { boardId, pulseId: itemId } = body.event
     const prefixMap = await mondayService.getPrefixMapByBoardId(boardId)

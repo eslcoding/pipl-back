@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { authenticationMiddleware } = require('../../middlewares/requireAuth.middleware');
+
 const mondayController = require('./monday.controller');
 
 router.post('/auto', mondayController.getWebHook);
