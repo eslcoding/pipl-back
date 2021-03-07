@@ -104,7 +104,6 @@ async function getWebHookItem(req, res) {
   const body = req.body
   if (!body?.event) return res.json({ 'challenge': body.challenge })
   try {
-    console.log('getWebHookItem -> testSession', testSession)
     // console.log('body.event: ', body.event);
     const { boardId, pulseId: itemId } = body.event
     const prefixMap = await mondayService.getPrefixMapByBoardId(boardId)
