@@ -89,12 +89,12 @@ async function getInter(req, res) {
 
     // console.log('getWebHook -> value', value)
 
-    const query = `mutation {
+    const query2 = `mutation {
       change_simple_column_value (board_id: ${boardId}, item_id: ${pulseId}, column_id: ${prefixMap.targetColId}, value: ${JSON.stringify(nextPrefix)}) {
         id
       }
     }`
-    const test = await monday.api(query)
+    const test = await monday.api(query2)
     await mondayService.updatePrefixMap(prefixMap)
     res.end()
   } catch (err) {
