@@ -103,6 +103,53 @@ async function getInter(req, res) {
   }
 }
 
+
+
+
+async function getInterItem(req, res) {
+  const body = req.body
+  console.log('getWebHook -> body', body)
+  try {
+    const { shortLivedToken } = req.session
+    const { boardId, itemId } = body.payload.inboundFieldValues
+    const prefixMap = await mondayService.getPrefixMapByBoardId(boardId)
+    const monday = initMondayClient()
+    monday.setToken(shortLivedToken)
+
+
+    const query = `query {
+      boards(ids: ${boardId}) {
+        items(ids: ${itemId}) {
+          column_values(ids: ${prefixMap?.srcColId}) {
+            text
+          }
+        }
+      }
+    }`
+
+    const { data: { boards } } = await monday.api(query)
+    const items = boards[0].items
+    const { text } = items[0].column_values[0]
+
+    const nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
+
+    // console.log('getWebHook -> value', value)
+
+    const query2 = `mutation {
+      change_simple_column_value (board_id: ${boardId}, item_id: ${itemId}, column_id: ${prefixMap.targetColId}, value: ${JSON.stringify(nextPrefix)}) {
+        id
+      }
+    }`
+    const test = await monday.api(query2)
+    await mondayService.updatePrefixMap(prefixMap)
+    res.end()
+  } catch (err) {
+    console.log('err: ', err);
+
+  }
+}
+
+
 async function getWebHook(req, res) {
   const body = req.body
   if (!body?.event) return res.json({ 'challenge': body.challenge })
@@ -253,5 +300,6 @@ module.exports = {
   getWebHook,
   getWebHookItem,
   addColumn,
-  getInter
+  getInter,
+  getInterItem
 };
