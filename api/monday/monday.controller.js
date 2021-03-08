@@ -84,8 +84,11 @@ async function getInter(req, res) {
     const { data: { boards } } = await monday.api(query)
     const items = boards[0].items
     const { text } = items[0].column_values[0]
-
-    const nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
+    console.log('getInter -> text', text)
+    var nextPrefix = ''
+    if (text) {
+      nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
+    }
 
     // console.log('getWebHook -> value', value)
 

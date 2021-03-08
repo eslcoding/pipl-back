@@ -123,6 +123,7 @@ async function getPrefixMapByBoardId(boardId) {
 
 
 function getNextPrefixCount(prefix, prefixMap) {
+  // if ()
   prefixMap.map[prefix] = (prefixMap.map[prefix]) ? prefixMap.map[prefix] + 1 : 1
   return prefix + '-' + prefixMap.map[prefix]
 }
