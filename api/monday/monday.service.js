@@ -166,7 +166,7 @@ async function addPrefixMap(prefixMap) {
 async function updatePrefixMap(prefixMap) {
   const collection = await dbService.getCollection('prefix')
   try {
-    const prefix = await collection.updateOne({ boardId: prefixMap.boardId }, { $set: { map: prefixMap.map } })
+    const prefix = await collection.updateOne({ boardId: prefixMap.boardId }, { $set: { map: prefixMap.map, targetColId: prefixMap.targetColId } })
     return prefix
   } catch (err) {
     console.log('ERROR: cannot update prefix')
