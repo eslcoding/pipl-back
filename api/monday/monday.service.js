@@ -119,31 +119,31 @@ async function updatePrefixMapAll(prefixMapAll) {
 }
 
 
-async function mappingScript() {
-  return
-  const collection = await dbService.getCollection('prefix')
-  try {
-    // const prefixs = await collection.find({ srcColId: { $not: { $regex: /project_prefix/i } } }).toArray();
-    const prefixs = await collection.find({ srcColId: { $regex: /project_prefix/i } }).toArray();
-    // const prefixs = await collection.find().toArray();
-    const prefixMap = prefixs.reduce((_prefixMap, prefixObj) => {
-      for (let key in prefixObj.map) {
-        _prefixMap[key] ??= 0
-        _prefixMap[key] += prefixObj.map[key]
-      }
-      return _prefixMap
-    }, {})
+// async function mappingScript() {
+//   return
+//   const collection = await dbService.getCollection('prefix')
+//   try {
+//     // const prefixs = await collection.find({ srcColId: { $not: { $regex: /project_prefix/i } } }).toArray();
+//     const prefixs = await collection.find({ srcColId: { $regex: /project_prefix/i } }).toArray();
+//     // const prefixs = await collection.find().toArray();
+//     const prefixMap = prefixs.reduce((_prefixMap, prefixObj) => {
+//       for (let key in prefixObj.map) {
+//         _prefixMap[key] ??= 0
+//         _prefixMap[key] += prefixObj.map[key]
+//       }
+//       return _prefixMap
+//     }, {})
 
 
-    // const mapCollection = await dbService.getCollection('prefixMapTest')
-    // mapCollection.insertOne(prefixMap)
+//     // const mapCollection = await dbService.getCollection('prefixMapTest')
+//     // mapCollection.insertOne(prefixMap)
 
-    return prefixs
-  } catch (err) {
-    console.log('ERROR: cannot find prefix', err)
-    throw err;
-  }
-}
+//     return prefixs
+//   } catch (err) {
+//     console.log('ERROR: cannot find prefix', err)
+//     throw err;
+//   }
+// }
 
 
 

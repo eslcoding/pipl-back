@@ -25,7 +25,7 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', 'https://api-gw.monday.com');
     res.header('Access-Control-Allow-Origin', 'https://88983808e60cae26.cdn.monday.app');
 
-    // res.header('Access-Control-Allow-Origin', 'https://aee9351f6c6a5634.cdn2.monday.app');
+    res.header('Access-Control-Allow-Origin', 'https://aee9351f6c6a5634.cdn2.monday.app');
     
     res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE');
     // res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
