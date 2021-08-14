@@ -8,8 +8,10 @@ router.post('/test', mondayController.testFunc);
 router.post('/auth', authController.authorization);
 // router.get('/prefixMap', mondayController.getPrefixMap);
 router.post('/updatePrefixMap', mondayController.updatePrefixMap);
+router.post('/updatePrefixMapAll', mondayController.updatePrefixMapAll);
 // router.get('/getPrefixMap/:boardId', mondayController.getPrefixMapByBoardId);
 router.post('/getPrefixMap', mondayController.getPrefixMapByBoardId);
+router.post('/getPrefixMapAll', mondayController.getPrefixMapAll);
 router.post('/addColumn', mondayController.addColumn);
 // router.post('/automations/automations', mondayController.getPrefixMapByBoardId);
 

@@ -6,40 +6,6 @@ const initMondayClient = require('monday-sdk-js');
 const token = process.env.MONDAY_API
 
 
-// async function executeAction(req, res) {
-//   const { shortLivedToken } = req.session;
-// const { payload } = req.body;
-
-//   try {
-//     const { inputFields } = payload;
-//     const { boardId, itemId, sourceColumnId, targetColumnId, transformationType } = inputFields;
-
-//     const text = await mondayService.getColumnValue(shortLivedToken, itemId, sourceColumnId);
-//     if (!text) {
-//       return res.status(200).send({});
-//     }
-//     const transformedText = transformationService.transformText(
-//       text,
-//       transformationType ? transformationType.value : 'TO_UPPER_CASE'
-//     );
-
-//     await mondayService.changeColumnValue(shortLivedToken, boardId, itemId, targetColumnId, transformedText);
-
-//     return res.status(200).send({});
-//   } catch (err) {
-//     console.error(err);
-//     return res.status(500).send({ message: 'internal server error' });
-//   }
-// }
-
-// async function getRemoteListOptions(req, res) {
-//   try {
-//     return res.status(200).send(TRANSFORMATION_TYPES);
-//   } catch (err) {
-//     console.error(err);
-//     return res.status(500).send({ message: 'internal server error' });
-//   }
-// }
 
 
 async function testFunc(req, res) {
@@ -262,6 +228,20 @@ async function getPrefixMapByBoardId(req, res) {
   }
 }
 
+async function getPrefixMapAll(req, res) {
+  // const { boardId } = req.params
+  const { boardId } = req.body
+  console.log('getPrefixMapByBoardId -> boardId', boardId)
+  try {
+    const prefixMap = await mondayService.getPrefixMapAll(boardId)
+    res.json(prefixMap)
+
+  } catch (err) {
+    console.log('err: ', err);
+
+  }
+}
+
 // async function updatePrefixMap(req, res) {
 //   const { body: { prefixMap } } = req
 //   const prefixMapArr = await mondayService.updatePrefixMap(prefixMap)
@@ -291,6 +271,23 @@ async function updatePrefixMap(req, res) {
   // delete prefixMap._id
 }
 
+async function updatePrefixMapAll(req, res) {
+  const { body: { prefixMapAll } } = req
+  console.log('updatePrefixMapAll -> prefixMapAll', prefixMapAll)
+  let prefixMapArr
+  try {
+    prefixMapArr = await mondayService.updatePrefixMapAll(prefixMapAll)
+
+    res.json(prefixMapArr)
+  } catch (err) {
+    console.log('err: ', err);
+    res.end()
+  }
+
+  // const { prefixMap } = prefixMapArr[0]
+  // delete prefixMap._id
+}
+
 
 
 module.exports = {
@@ -304,5 +301,7 @@ module.exports = {
   getWebHookItem,
   addColumn,
   getInter,
-  getInterItem
+  getInterItem,
+  getPrefixMapAll,
+  updatePrefixMapAll
 };

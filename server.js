@@ -38,7 +38,7 @@ if (!config.env.isDevelopment) {
     // app.use(express.static(path.resolve(__dirname, 'public')));
 } else {
     const corsOptions = {
-        origin: ['http://127.0.0.1:8080', 'http://localhost:8080', 'http://127.0.0.1:3000', 'https://localhost:3000','https://68b6374b42a0.ngrok.io', 'https://71cd4e978e0ae495.cdn.monday.app', 'https://testing-apps.monday.com', 'https://api-gw.monday.com'],
+        origin: ['http://127.0.0.1:8080', 'http://localhost:8080', 'http://127.0.0.1:3000', 'https://localhost:3000','https://8227f156f9c9.ngrok.io', 'https://88983808e60cae26.cdn.monday.app', 'https://testing-apps.monday.com', 'https://api-gw.monday.com'],
         credentials: true
     };
     app.use(cors(corsOptions));
