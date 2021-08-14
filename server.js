@@ -48,7 +48,7 @@ if (!config.env.isDevelopment) {
     };
 } else {
     corsOptions = {
-        origin: ['http://127.0.0.1:8080', 'http://localhost:8080', 'http://127.0.0.1:3000', 'https://localhost:3000', 'https://8227f156f9c9.ngrok.io', 'https://88983808e60cae26.cdn.monday.app', 'https://testing-apps.monday.com', 'https://api-gw.monday.com'],
+        origin: ['http://127.0.0.1:8080', 'http://localhost:8080', 'http://127.0.0.1:3000', 'https://localhost:3000', 'https://7a27bef1c93f.ngrok.io', 'https://88983808e60cae26.cdn.monday.app', 'https://testing-apps.monday.com', 'https://api-gw.monday.com'],
         credentials: true
     };
 }

@@ -13,6 +13,7 @@ router.post('/updatePrefixMapAll', mondayController.updatePrefixMapAll);
 router.post('/getPrefixMap', mondayController.getPrefixMapByBoardId);
 router.post('/getPrefixMapAll', mondayController.getPrefixMapAll);
 router.post('/addColumn', mondayController.addColumn);
+router.post('/resetPrefix', mondayController.resetPrefix);
 // router.post('/automations/automations', mondayController.getPrefixMapByBoardId);
 
 module.exports = router;

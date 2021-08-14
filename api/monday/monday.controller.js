@@ -11,7 +11,6 @@ const token = process.env.MONDAY_API
 async function testFunc(req, res) {
   const body = req.body
   res.json('yoyoyo')
-  console.log('testFunc -> body', body)
 }
 
 async function getPrefixMap(req, res) {
@@ -22,17 +21,20 @@ async function getPrefixMap(req, res) {
     res.json(prefixMap)
   } catch (err) {
     console.log('err: ', err);
+    res.end()
 
   }
 }
 
 async function getInter(req, res) {
   const body = req.body
-  console.log('getWebHook -> body', body)
   try {
     const { shortLivedToken } = req.session
     const { boardId, itemId } = body.payload.inboundFieldValues
     const prefixMap = await mondayService.getPrefixMapByBoardId(boardId)
+    let prefixMapAll = await mondayService.getPrefixMapAll()
+    prefixMapAll = { map: prefixMapAll[0] }
+    console.log('hello integration');
     const monday = initMondayClient()
     monday.setToken(shortLivedToken)
 
@@ -50,13 +52,13 @@ async function getInter(req, res) {
     const { data: { boards } } = await monday.api(query)
     const items = boards[0].items
     const { text } = items[0].column_values[0]
-    console.log('getInter -> text', text)
     var nextPrefix = ''
     if (text) {
-      nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
+      // nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
+      /*Change in production only when ready!! */
+      nextPrefix = mondayService.getNextPrefixCount(text, prefixMapAll)
     }
 
-    // console.log('getWebHook -> value', value)
 
     const query2 = `mutation {
       change_simple_column_value (board_id: ${boardId}, item_id: ${itemId}, column_id: ${prefixMap.targetColId}, value: ${JSON.stringify(nextPrefix)}) {
@@ -65,9 +67,11 @@ async function getInter(req, res) {
     }`
     const test = await monday.api(query2)
     await mondayService.updatePrefixMap(prefixMap)
+    await mondayService.updatePrefixMapAll(prefixMapAll)
     res.end()
   } catch (err) {
     console.log('err: ', err);
+    res.end()
 
   }
 }
@@ -77,7 +81,6 @@ async function getInter(req, res) {
 
 async function getInterItem(req, res) {
   const body = req.body
-  console.log('getWebHook -> body', body)
   try {
     const { shortLivedToken } = req.session
     const { boardId, itemId } = body.payload.inboundFieldValues
@@ -102,7 +105,6 @@ async function getInterItem(req, res) {
 
     const nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
 
-    // console.log('getWebHook -> value', value)
 
     const query2 = `mutation {
       change_simple_column_value (board_id: ${boardId}, item_id: ${itemId}, column_id: ${prefixMap.targetColId}, value: ${JSON.stringify(nextPrefix)}) {
@@ -114,6 +116,7 @@ async function getInterItem(req, res) {
     res.end()
   } catch (err) {
     console.log('err: ', err);
+    res.end()
 
   }
 }
@@ -126,7 +129,6 @@ async function getWebHook(req, res) {
 
     const { boardId, groupId, pulseId, columnId, value } = body.event
     const { label: { text } } = value
-    // console.log('getWebHook -> value', value)
     const prefixMap = await mondayService.getPrefixMapByBoardId(boardId)
     const nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
     const monday = initMondayClient()
@@ -142,7 +144,7 @@ async function getWebHook(req, res) {
     res.end()
   } catch (err) {
     console.log('err: ', err);
-
+    res.end()
   }
 
   // const query2 = `mutation {
@@ -152,7 +154,6 @@ async function getWebHook(req, res) {
   //   }`
   // await monday.api(query2)
 
-  // console.log('getWebHook -> challenge', challenge)
   // axios.post('https://api-gw.monday.com/automations/automations', {challenge})
 }
 async function getWebHookItem(req, res) {
@@ -188,11 +189,10 @@ async function getWebHookItem(req, res) {
   }`
 
     let result = await monday.api(query2)
-    console.log('getWebHookItem -> result', result)
     res.end()
   } catch (err) {
     console.log('err: ', err);
-
+    res.end()
   }
 
 }
@@ -208,7 +208,7 @@ async function addColumn(req, res) {
 
   } catch (error) {
     console.log('error: ', error);
-
+    res.end()
   }
 }
 
@@ -217,7 +217,6 @@ async function addColumn(req, res) {
 async function getPrefixMapByBoardId(req, res) {
   // const { boardId } = req.params
   const { boardId } = req.body
-  console.log('getPrefixMapByBoardId -> boardId', boardId)
   try {
     const prefixMap = await mondayService.getPrefixMapByBoardId(boardId)
     res.json(prefixMap)
@@ -231,21 +230,19 @@ async function getPrefixMapByBoardId(req, res) {
 async function getPrefixMapAll(req, res) {
   // const { boardId } = req.params
   const { boardId } = req.body
-  console.log('getPrefixMapByBoardId -> boardId', boardId)
   try {
     const prefixMap = await mondayService.getPrefixMapAll(boardId)
     res.json(prefixMap)
 
   } catch (err) {
     console.log('err: ', err);
-
+    res.end()
   }
 }
 
 // async function updatePrefixMap(req, res) {
 //   const { body: { prefixMap } } = req
 //   const prefixMapArr = await mondayService.updatePrefixMap(prefixMap)
-//   // console.log('updatePrefixMap -> prefixMapArr', prefixMapArr)
 //   // const { prefixMap } = prefixMapArr[0]
 //   // delete prefixMap._id
 //   res.json(prefixMapArr)
@@ -264,7 +261,7 @@ async function updatePrefixMap(req, res) {
     res.json(prefixMapArr)
   } catch (err) {
     console.log('err: ', err);
-
+    res.end()
   }
 
   // const { prefixMap } = prefixMapArr[0]
@@ -273,7 +270,6 @@ async function updatePrefixMap(req, res) {
 
 async function updatePrefixMapAll(req, res) {
   const { body: { prefixMapAll } } = req
-  console.log('updatePrefixMapAll -> prefixMapAll', prefixMapAll)
   let prefixMapArr
   try {
     prefixMapArr = await mondayService.updatePrefixMapAll(prefixMapAll)
@@ -286,6 +282,22 @@ async function updatePrefixMapAll(req, res) {
 
   // const { prefixMap } = prefixMapArr[0]
   // delete prefixMap._id
+}
+
+async function resetPrefix(req, res) {
+  const { body: { prefix } } = req
+  try {
+    console.log('trying reset');
+    await mondayService.resetPrefix(prefix)
+    console.log('succeeddd reset');
+    res.send()
+  } catch (err) {
+    console.log('err: ', err);
+    
+  } finally {
+    res.end()
+  }
+
 }
 
 
@@ -303,5 +315,6 @@ module.exports = {
   getInter,
   getInterItem,
   getPrefixMapAll,
-  updatePrefixMapAll
+  updatePrefixMapAll,
+  resetPrefix
 };

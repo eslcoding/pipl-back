@@ -118,6 +118,24 @@ async function updatePrefixMapAll(prefixMapAll) {
   }
 }
 
+async function resetPrefix(prefix) {
+  if (!prefix) return
+
+  try {
+    const prefixMapArr = await getPrefixMapAll()
+    const prefixMap = prefixMapArr[0]
+    prefixMap[prefix] = 0
+    await updatePrefixMapAll({ map: prefixMap })
+    return
+    // const prefix = await collection.updateOne({ _id: prefixMapAll._id }, { $set: { ...prefixMapAll } })
+  } catch (err) {
+    console.log('ERROR: cannot reset prefix', err)
+    throw err;
+  }
+}
+
+
+
 
 // async function mappingScript() {
 //   return
@@ -157,7 +175,8 @@ module.exports = {
   addPrefixMap,
   getNextPrefixCount,
   getPrefixMapAll,
-  updatePrefixMapAll
+  updatePrefixMapAll,
+  resetPrefix
 };
 
 
