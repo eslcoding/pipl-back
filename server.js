@@ -41,7 +41,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // for some other content ty
 var corsOptions;
 if (!config.env.isDevelopment) {
     corsOptions = {
-        origin: ['https://testing-apps.monday.com', 'https://api-gw.monday.com', 'https://88983808e60cae26.cdn.monday.app', 'https://aee9351f6c6a5634.cdn2.monday.app'],
+        origin: ['https://testing-apps.monday.com', 'https://api-gw.monday.com', 'https://aee9351f6c6a5634.cdn2.monday.app'],
         methods: ['GET', 'PUT', 'POST', 'HEAD', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Origin', 'Content-Type', 'X-Auth-Token', 'x-pulse-pusher-socketid'],
         credentials: true
