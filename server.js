@@ -36,10 +36,10 @@ app.use(bodyParser.urlencoded({ extended: true })); // for some other content ty
 //     next();
 // });
 /*ORIGINAL END*/
-// "preflightContinue": false,
+
+
 var corsOptions;
 if (!config.env.isDevelopment) {
-    // app.use(express.static(path.resolve(__dirname, 'public')));
     corsOptions = {
         origin: ['https://testing-apps.monday.com', 'https://api-gw.monday.com', 'https://88983808e60cae26.cdn.monday.app', 'https://aee9351f6c6a5634.cdn2.monday.app'],
         methods: ['GET', 'PUT', 'POST', 'HEAD', 'DELETE', 'OPTIONS'],
@@ -48,7 +48,7 @@ if (!config.env.isDevelopment) {
     };
 } else {
     corsOptions = {
-        origin: ['http://127.0.0.1:8080', 'http://localhost:8080', 'http://127.0.0.1:3000', 'https://localhost:3000', 'https://7a27bef1c93f.ngrok.io', 'https://88983808e60cae26.cdn.monday.app', 'https://testing-apps.monday.com', 'https://api-gw.monday.com'],
+        origin: ['http://127.0.0.1:8080', 'http://localhost:8080', 'http://127.0.0.1:3000', 'https://localhost:3000', 'https://3d9b7dff44f5.ngrok.io', 'https://88983808e60cae26.cdn.monday.app', 'https://testing-apps.monday.com', 'https://api-gw.monday.com', 'https://aee9351f6c6a5634.cdn2.monday.app'],
         credentials: true
     };
 }
@@ -58,11 +58,6 @@ app.use(cors(corsOptions));
 app.use('/api/auth', authRoutes)
 app.use('/api/monday', mondayRoutes)
 app.use('/', mondayWebHookRoutes)
-
-// app.get('/*', function(req,res) {
-//     // res.sendFile(path.resolve(__dirname, 'public/taskpane.html'))
-//     res.send('HELLOOOOOO')
-// })
 
 const logger = require('./services/logger.service')
 const port = process.env.PORT || 3030;

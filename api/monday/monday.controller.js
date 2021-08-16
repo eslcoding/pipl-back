@@ -240,13 +240,6 @@ async function getPrefixMapAll(req, res) {
   }
 }
 
-// async function updatePrefixMap(req, res) {
-//   const { body: { prefixMap } } = req
-//   const prefixMapArr = await mondayService.updatePrefixMap(prefixMap)
-//   // const { prefixMap } = prefixMapArr[0]
-//   // delete prefixMap._id
-//   res.json(prefixMapArr)
-// }
 
 async function updatePrefixMap(req, res) {
   const { body: { prefixMap } } = req
@@ -264,8 +257,7 @@ async function updatePrefixMap(req, res) {
     res.end()
   }
 
-  // const { prefixMap } = prefixMapArr[0]
-  // delete prefixMap._id
+  
 }
 
 async function updatePrefixMapAll(req, res) {
@@ -280,16 +272,13 @@ async function updatePrefixMapAll(req, res) {
     res.end()
   }
 
-  // const { prefixMap } = prefixMapArr[0]
-  // delete prefixMap._id
+ 
 }
 
 async function resetPrefix(req, res) {
   const { body: { prefix } } = req
   try {
-    console.log('trying reset');
     await mondayService.resetPrefix(prefix)
-    console.log('succeeddd reset');
     res.send()
   } catch (err) {
     console.log('err: ', err);
