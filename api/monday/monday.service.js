@@ -73,8 +73,8 @@ async function getPrefixMapByBoardId(boardId) {
 }
 
 
-function getNextPrefixCount(prefix, prefixMap) {
-  prefixMap.map[prefix] = (prefixMap.map[prefix]) ? prefixMap.map[prefix] + 1 : 1
+function getNextPrefixCount(prefix, prefixMap, inc) {
+  prefixMap.map[prefix] = (prefixMap.map[prefix]) ? prefixMap.map[prefix] + inc : 1
   return prefix + '-' + prefixMap.map[prefix]
 }
 

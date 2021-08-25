@@ -4,7 +4,7 @@ const mondayService = require('./monday.service');
 const axios = require('axios')
 const initMondayClient = require('monday-sdk-js');
 const token = process.env.MONDAY_API
-
+var gInc = 1
 
 
 
@@ -28,16 +28,21 @@ async function getPrefixMap(req, res) {
 
 async function getInter(req, res) {
   const body = req.body
+
   try {
+    console.log('inter')
     const { shortLivedToken } = req.session
+    if (gInc === 1) {
+      setTimeout(() => gInc = 1, 3000)
+    }
+
     const { boardId, itemId } = body.payload.inboundFieldValues
     const prefixMap = await mondayService.getPrefixMapByBoardId(boardId)
     let prefixMapAll = await mondayService.getPrefixMapAll()
+
     prefixMapAll = { map: prefixMapAll[0] }
-    console.log('hello integration');
     const monday = initMondayClient()
     monday.setToken(shortLivedToken)
-
 
     const query = `query {
       boards(ids: ${boardId}) {
@@ -56,7 +61,11 @@ async function getInter(req, res) {
     if (text) {
       // nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
       /*Change in production only when ready!! */
-      nextPrefix = mondayService.getNextPrefixCount(text, prefixMapAll)
+      console.log('gInc: ', gInc);
+
+      nextPrefix = mondayService.getNextPrefixCount(text, prefixMapAll, gInc)
+      gInc++
+
     }
 
 
@@ -73,7 +82,13 @@ async function getInter(req, res) {
     console.log('err: ', err);
     res.end()
 
+  } finally {
+    res.end()
   }
+}
+
+function sleep(time) {
+  return new Promise((res, rej) => setTimeout(res, time))
 }
 
 
@@ -257,7 +272,7 @@ async function updatePrefixMap(req, res) {
     res.end()
   }
 
-  
+
 }
 
 async function updatePrefixMapAll(req, res) {
@@ -272,7 +287,7 @@ async function updatePrefixMapAll(req, res) {
     res.end()
   }
 
- 
+
 }
 
 async function resetPrefix(req, res) {
@@ -282,7 +297,7 @@ async function resetPrefix(req, res) {
     res.send()
   } catch (err) {
     console.log('err: ', err);
-    
+
   } finally {
     res.end()
   }
