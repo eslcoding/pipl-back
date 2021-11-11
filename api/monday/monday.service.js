@@ -1,139 +1,152 @@
-const initMondayClient = require('monday-sdk-js');
-const PREFIX_KEY = 'prefixKey'
+const initMondayClient = require("monday-sdk-js");
+const PREFIX_KEY = "prefixKey";
 // const dbService = require('./mongo-service')
-const dbService = require('../../services/db.service');
-
+const dbService = require("../../services/db.service");
 
 // const fs = require('fs');
 
 // var prefixMap = require('../data/prefixMap.json')
 
-
-const ObjectId = require('mongodb').ObjectId;
-
-
-
-
+const ObjectId = require("mongodb").ObjectId;
 
 /*REMOVE!*/
 const storeBoardNum = (token) => {
   const mondayClient = initMondayClient({ token });
 
   // const boardKey = KEY + boardId
-  mondayClient.storage.instance.getItem('boardKey').then(res => {
-    const nextNum = res.data.value ? +res.data.value + 1 : 1
-    // const 
-    monday.storage.instance.setItem('boardKey', nextNum).then(res => {
+  mondayClient.storage.instance.getItem("boardKey").then((res) => {
+    const nextNum = res.data.value ? +res.data.value + 1 : 1;
+    // const
+    monday.storage.instance.setItem("boardKey", nextNum).then((res) => {
       console.log(res);
-    })
-  })
-}
+    });
+  });
+};
 
-
-
+/**
+ * gets all prefixes
+ * @returns {[object]} prefix array
+ */
 async function getPrefixMap() {
-  const collection = await dbService.getCollection('prefix')
+  const collection = await dbService.getCollection("prefix");
   try {
     const prefix = await collection.find().toArray();
 
-    return prefix
+    return prefix;
   } catch (err) {
-    console.log('ERROR: cannot find prefix')
+    console.log("ERROR: cannot find prefix");
     throw err;
   }
-
 }
-
+/**
+ * gets prefix map object in an array
+ * @returns {[object]} prefix map - array with one value
+ */
 async function getPrefixMapAll() {
-  const collection = await dbService.getCollection('prefixMap')
+  const collection = await dbService.getCollection("prefixMap");
   try {
     const prefix = await collection.find().toArray();
 
-    return prefix
+    return prefix;
   } catch (err) {
-    console.log('ERROR: cannot find prefix')
+    console.log("ERROR: cannot find prefix");
     throw err;
   }
-
 }
 
+/**
+ * gets single board prefixes
+ * @param {number} boardId
+ * @returns {[object]} board prefix map - array with one value
+ */
 async function getPrefixMapByBoardId(boardId) {
-  const collection = await dbService.getCollection('prefix')
+  const collection = await dbService.getCollection("prefix");
   try {
     // const prefix = await collection.find().toArray();
-    const prefix = await collection.findOne({ boardId })
+    const prefix = await collection.findOne({ boardId });
 
-
-    return prefix
+    return prefix;
   } catch (err) {
-    console.log('ERROR: cannot find prefix')
+    console.log("ERROR: cannot find prefix");
     throw err;
   }
-
 }
-
-
+/**
+ * adds 1 to existing prefix or starts a new one
+ * @param {string} prefix
+ * @param {object} prefixMap
+ * @returns {string} new prefix string
+ */
 function getNextPrefixCount(prefix, prefixMap) {
-  prefixMap.map[prefix] = (prefixMap.map[prefix]) ? prefixMap.map[prefix] + 1 : 1
-  return prefix + '-' + prefixMap.map[prefix]
+  prefixMap.map[prefix] = prefixMap.map[prefix] ? prefixMap.map[prefix] + 1 : 1;
+  return prefix + "-" + prefixMap.map[prefix];
 }
-
-
+/**
+ * adds new prefix to prefix map
+ * @param {object} prefixMap
+ * @returns {object} updated prefixMap
+ */
 async function addPrefixMap(prefixMap) {
-  const collection = await dbService.getCollection('prefix')
+  const collection = await dbService.getCollection("prefix");
   try {
     await collection.insertOne(prefixMap);
 
-    return prefixMap
+    return prefixMap;
   } catch (err) {
-    console.log('ERROR: cannot ADD prefix')
+    console.log("ERROR: cannot ADD prefix");
     throw err;
   }
-
 }
-
+/**
+ * updates prefix map of a single board
+ * @param {object} prefixMap
+ * @returns {object} updated prefixMap
+ */
 async function updatePrefixMap(prefixMap) {
-  const collection = await dbService.getCollection('prefix')
+  const collection = await dbService.getCollection("prefix");
   try {
-    const prefix = await collection.updateOne({ boardId: prefixMap.boardId }, { $set: { map: prefixMap.map, targetColId: prefixMap.targetColId } })
-    return prefix
+    const prefix = await collection.updateOne(
+      { boardId: prefixMap.boardId },
+      { $set: { map: prefixMap.map, targetColId: prefixMap.targetColId } }
+    );
+    return prefix;
   } catch (err) {
-    console.log('ERROR: cannot update prefix')
+    console.log("ERROR: cannot update prefix");
     throw err;
   }
 }
-
-
 
 async function updatePrefixMapAll(prefixMapAll) {
-  prefixMapAll = prefixMapAll.map
-  prefixMapAll._id = ObjectId(prefixMapAll._id)
-  const collection = await dbService.getCollection('prefixMap')
+  prefixMapAll = prefixMapAll.map;
+  prefixMapAll._id = ObjectId(prefixMapAll._id);
+  const collection = await dbService.getCollection("prefixMap");
   try {
-    const prefix = await collection.updateOne({ _id: prefixMapAll._id }, { $set: { ...prefixMapAll } })
-    return prefix
+    const prefix = await collection.updateOne(
+      { _id: prefixMapAll._id },
+      { $set: { ...prefixMapAll } }
+    );
+    return prefix;
   } catch (err) {
-    console.log('ERROR: cannot update prefix', err)
+    console.log("ERROR: cannot update prefix", err);
     throw err;
   }
 }
 
 async function resetPrefix(prefix) {
-  if (!prefix) return
+  if (!prefix) return;
 
   try {
-    const prefixMapArr = await getPrefixMapAll()
-    const prefixMap = prefixMapArr[0]
-    prefixMap[prefix] = 0
-    await updatePrefixMapAll({ map: prefixMap })
-    return
+    const prefixMapArr = await getPrefixMapAll();
+    const prefixMap = prefixMapArr[0];
+    prefixMap[prefix] = 0;
+    await updatePrefixMapAll({ map: prefixMap });
+    return;
     // const prefix = await collection.updateOne({ _id: prefixMapAll._id }, { $set: { ...prefixMapAll } })
   } catch (err) {
-    console.log('ERROR: cannot reset prefix', err)
+    console.log("ERROR: cannot reset prefix", err);
     throw err;
   }
 }
-
 
 // async function mappingScript() {
 //   const collection = await dbService.getCollection('prefix')
@@ -149,7 +162,6 @@ async function resetPrefix(prefix) {
 //       return _prefixMap
 //     }, {})
 
-
 //     const mapCollection = await dbService.getCollection('prefixMap')
 //     mapCollection.insertOne(prefixMap)
 
@@ -159,9 +171,6 @@ async function resetPrefix(prefix) {
 //     throw err;
 //   }
 // }
-
-
-
 
 module.exports = {
   // getColumnValue,
@@ -173,19 +182,8 @@ module.exports = {
   getNextPrefixCount,
   getPrefixMapAll,
   updatePrefixMapAll,
-  resetPrefix
+  resetPrefix,
 };
-
-
-
-
-
-
-
-
-
-
-
 
 // const dbService = require('../../services/db.service');
 // const fetch = require('node-fetch');
@@ -198,9 +196,7 @@ module.exports = {
 
 // monday.setToken(process.env.MONDAY_API);
 
-
 // // apiCalls()
-
 
 // async function apiCalls() {
 //     // const { data: { users, boards } } = await monday.api('query { users { name, id } boards {id} }')
@@ -210,7 +206,6 @@ module.exports = {
 //     // let { data } = await monday.api(`query {boards (ids: ${boardId}) {items {id}}}`)
 //     // let { items } = data.boards[0]
 
-
 //     //     let to = await monday.api(`
 //     //     mutation {
 //     //       create_notification(
@@ -218,21 +213,16 @@ module.exports = {
 //     //         user_id: ${userId},
 //     //         target_id: 1070970443,
 //     //         target_type: Project,
-//     //       ) { 
-//     //         id 
+//     //       ) {
+//     //         id
 //     //       }
 //     //     }
 //     //   `);
 
-
-
 //     // const callback = res => console.log(res);
 //     // const unsubscribe = monday.listen("events", callback);
 
-
 // }
-
-
 
 // // let query = '{boards(limit:1) { name id description items { name column_values{title id type text } } } }';
 
@@ -250,9 +240,3 @@ module.exports = {
 // //   .then(res => console.log(JSON.stringify(res, null, 2)));
 
 // // emailTest()
-
-
-
-
-
-
