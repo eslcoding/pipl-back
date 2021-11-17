@@ -43,7 +43,8 @@ async function getPrefixMap() {
  * @returns {[object]} prefix map - array with one value
  */
 async function getPrefixMapAll() {
-  const collection = await dbService.getCollection("prefixMap");
+  // const collection = await dbService.getCollection("prefixMap");
+  const collection = await dbService.getCollection("prefixMapTest");
   try {
     const prefix = await collection.find().toArray();
 
@@ -119,7 +120,8 @@ async function updatePrefixMap(prefixMap) {
 async function updatePrefixMapAll(prefixMapAll) {
   prefixMapAll = prefixMapAll.map;
   prefixMapAll._id = ObjectId(prefixMapAll._id);
-  const collection = await dbService.getCollection("prefixMap");
+  // const collection = await dbService.getCollection("prefixMap");
+  const collection = await dbService.getCollection("prefixMapTest");
   try {
     const prefix = await collection.updateOne(
       { _id: prefixMapAll._id },

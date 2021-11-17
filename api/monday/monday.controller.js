@@ -55,10 +55,12 @@ async function getInter(req, res) {
       }
     }`;
 
+    console.log(`boards -> boardId`, boardId);
     const {
       data: { boards },
     } = await monday.api(query);
     const items = boards[0].items;
+    console.log(`getInter -> items`, items);
     const { text } = items[0].column_values[0];
     var nextPrefix = "";
     if (text) {
@@ -66,15 +68,17 @@ async function getInter(req, res) {
       /*Change in production only when ready!! */
       nextPrefix = mondayService.getNextPrefixCount(text, prefixMapAll);
     }
-
+    console.log("hi im here!!");
     const query2 = `mutation {
       change_simple_column_value (board_id: ${boardId}, item_id: ${itemId}, column_id: ${
       prefixMap.targetColId
     }, value: ${JSON.stringify(nextPrefix)}) {
         id
+        name
       }
     }`;
     const test = await monday.api(query2);
+    console.log(`getInter -> test`, test);
     await mondayService.updatePrefixMap(prefixMap);
     await mondayService.updatePrefixMapAll(prefixMapAll);
     res.end();
@@ -98,6 +102,7 @@ async function getInterItem(req, res) {
         items(ids: ${itemId}) {
           column_values(ids: ${prefixMap?.srcColId}) {
             text
+            type
           }
         }
       }
@@ -108,13 +113,22 @@ async function getInterItem(req, res) {
     } = await monday.api(query);
     const items = boards[0].items;
     const { text } = items[0].column_values[0];
-
+    const { type } = items[0].column_values[0];
     const nextPrefix = mondayService.getNextPrefixCount(text, prefixMap);
 
-    const query2 = `mutation {
+    const query2 =
+      type === "text"
+        ? `mutation {
+      change_column_value (board_id: ${boardId}, item_id: ${itemId}, column_id: ${
+            prefixMap.targetColId
+          }, value: ${JSON.stringify(nextPrefix)}) {
+        id
+      }
+    }`
+        : `mutation {
       change_simple_column_value (board_id: ${boardId}, item_id: ${itemId}, column_id: ${
-      prefixMap.targetColId
-    }, value: ${JSON.stringify(nextPrefix)}) {
+            prefixMap.targetColId
+          }, value: ${JSON.stringify(nextPrefix)}) {
         id
       }
     }`;
