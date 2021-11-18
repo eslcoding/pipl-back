@@ -4,6 +4,7 @@ const mondayService = require("./monday.service");
 const axios = require("axios");
 const initMondayClient = require("monday-sdk-js");
 const token = process.env.MONDAY_API;
+var gInc = 1;
 
 async function testFunc(req, res) {
   const body = req.body;
@@ -35,13 +36,19 @@ async function getPrefixMap(req, res) {
  */
 async function getInter(req, res) {
   const body = req.body;
+
   try {
+    console.log("inter");
     const { shortLivedToken } = req.session;
+    if (gInc === 1) {
+      setTimeout(() => (gInc = 1), 3000);
+    }
+
     const { boardId, itemId } = body.payload.inboundFieldValues;
     const prefixMap = await mondayService.getPrefixMapByBoardId(boardId);
     let prefixMapAll = await mondayService.getPrefixMapAll();
+
     prefixMapAll = { map: prefixMapAll[0] };
-    console.log("hello integration");
     const monday = initMondayClient();
     monday.setToken(shortLivedToken);
 
@@ -66,7 +73,10 @@ async function getInter(req, res) {
     if (text) {
       // nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
       /*Change in production only when ready!! */
-      nextPrefix = mondayService.getNextPrefixCount(text, prefixMapAll);
+      console.log("gInc: ", gInc);
+
+      nextPrefix = mondayService.getNextPrefixCount(text, prefixMapAll, gInc);
+      gInc++;
     }
     console.log("hi im here!!");
     const query2 = `mutation {
@@ -85,7 +95,13 @@ async function getInter(req, res) {
   } catch (err) {
     console.log("err: ", err);
     res.end();
+  } finally {
+    res.end();
   }
+}
+
+function sleep(time) {
+  return new Promise((res, rej) => setTimeout(res, time));
 }
 
 async function getInterItem(req, res) {
