@@ -72,7 +72,6 @@ async function getPrefixMapByBoardId(boardId) {
     throw err;
   }
 }
-<<<<<<< HEAD
 /**
  * adds 1 to existing prefix or starts a new one
  * @param {string} prefix
@@ -82,13 +81,6 @@ async function getPrefixMapByBoardId(boardId) {
 function getNextPrefixCount(prefix, prefixMap) {
   prefixMap.map[prefix] = prefixMap.map[prefix] ? prefixMap.map[prefix] + 1 : 1;
   return prefix + "-" + prefixMap.map[prefix];
-=======
-
-
-function getNextPrefixCount(prefix, prefixMap, inc) {
-  prefixMap.map[prefix] = (prefixMap.map[prefix]) ? prefixMap.map[prefix] + inc : 1
-  return prefix + '-' + prefixMap.map[prefix]
->>>>>>> 6dc99011d6d13fb6bf0568e5c9b839d7fac31671
 }
 /**
  * adds new prefix to prefix map
