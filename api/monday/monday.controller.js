@@ -68,7 +68,10 @@ async function getInter(req, res) {
     } = await monday.api(query);
     const items = boards[0].items;
     console.log(`getInter -> items`, items);
-    const { text } = items[0].column_values[0];
+    const text =
+      items[0].column_values[0].type === "color"
+        ? items[0].column_values[0].text
+        : items[0].column_values[0].value;
     var nextPrefix = "";
     if (text) {
       // nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
