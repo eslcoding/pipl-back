@@ -47,8 +47,10 @@ async function getInter(req, res) {
     const { boardId, itemId } = body.payload.inboundFieldValues;
     const prefixMap = await mondayService.getPrefixMapByBoardId(boardId);
     let prefixMapAll = await mondayService.getPrefixMapAll();
+    console.log(`getInter -> prefixMapAll1`, prefixMapAll);
 
     prefixMapAll = { map: prefixMapAll[0] };
+    console.log(`getInter -> prefixMapAll`, prefixMapAll);
     const monday = initMondayClient();
     monday.setToken(shortLivedToken);
 
@@ -57,28 +59,34 @@ async function getInter(req, res) {
         items(ids: ${itemId}) {
           column_values(ids: ${prefixMap?.srcColId}) {
             text
+            type
           }
         }
       }
     }`;
 
     console.log(`boards -> boardId`, boardId);
-    const {
-      data: { boards },
-    } = await monday.api(query);
-    const items = boards[0].items;
-    console.log(`getInter -> items`, items);
-    const text =
-      items[0].column_values[0].type === "color"
-        ? items[0].column_values[0].text
-        : items[0].column_values[0].value;
+    const result = await monday.api(query);
+    console.log(`getInter -> result`, result);
+
+    const items = result.data.boards[0].items;
+    console.log(`getInter -> items`, items[0]);
+    console.log(
+      `getInter -> items[0].column_values[0]`,
+      items[0].column_values[0]
+    );
+    const text = items[0].column_values[0].text;
+    // items[0].column_values[0].type === "color"
+    //   ? items[0].column_values[0].text
+    //   : items[0].column_values[0].value;
     var nextPrefix = "";
+    console.log(`getInter -> text`, text);
     if (text) {
       // nextPrefix = mondayService.getNextPrefixCount(text, prefixMap)
       /*Change in production only when ready!! */
-      console.log("gInc: ", gInc);
 
       nextPrefix = mondayService.getNextPrefixCount(text, prefixMapAll, gInc);
+      console.log(`getInter -> nextPrefix`, nextPrefix);
       gInc++;
     }
     console.log("hi im here!!");
