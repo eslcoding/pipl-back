@@ -39,7 +39,8 @@ async function getPrefixMap(req, res) {
 async function getInter(req, res) {
   const body = req.body;
   try {
-    if (global.isReqOn) await sleep(2000);
+    if (global.isReqOn) await sleep(3000);
+    console.log("wake up");
     global.isReqOn = true;
   } catch (err) {
     console.log(`getInter -> err`, err);
@@ -120,6 +121,7 @@ async function getInter(req, res) {
 }
 
 function sleep(time) {
+  console.log(`sleep -> time`, `${time / 1000}s`);
   return new Promise((res, rej) => setTimeout(res, time));
 }
 
