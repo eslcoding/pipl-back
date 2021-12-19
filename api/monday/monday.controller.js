@@ -5,6 +5,8 @@ const axios = require("axios");
 const initMondayClient = require("monday-sdk-js");
 const token = process.env.MONDAY_API;
 var gInc = 1;
+global.isReqOn = false;
+console.log(`global.isReqOn`, global.isReqOn);
 
 async function testFunc(req, res) {
   const body = req.body;
@@ -36,8 +38,14 @@ async function getPrefixMap(req, res) {
  */
 async function getInter(req, res) {
   const body = req.body;
-
   try {
+    if (global.isReqOn) await sleep(2000);
+    global.isReqOn = true;
+  } catch (err) {
+    console.log(`getInter -> err`, err);
+  }
+  try {
+    console.log(`getInter ->  global.isReqOn`, global.isReqOn);
     console.log("inter");
     const { shortLivedToken } = req.session;
     if (gInc === 1) {
