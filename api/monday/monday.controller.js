@@ -57,7 +57,9 @@ async function getInter(req, res) {
     }
 
     const { boardId, itemId } = body.payload.inboundFieldValues;
-    const prefixMap = await mondayService.getPrefixMapByBoardId(boardId);
+    const prefixMap = await mondayService.getPrefixMapByBoardId(
+      Number(boardId)
+    );
     console.log(`getInter -> prefixMap`, prefixMap);
     let prefixMapAll = await mondayService.getPrefixMapAll();
     console.log(`getInter -> prefixMapAll`, prefixMapAll);
