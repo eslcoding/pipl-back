@@ -57,8 +57,9 @@ async function getInter(req, res) {
 
     const { boardId, itemId } = body.payload.inboundFieldValues;
     const prefixMap = await mondayService.getPrefixMapByBoardId(boardId);
+    console.log(`getInter -> prefixMap`, prefixMap);
     let prefixMapAll = await mondayService.getPrefixMapAll();
-    console.log(`getInter -> prefixMapAll1`, prefixMapAll);
+    console.log(`getInter -> prefixMapAll`, prefixMapAll);
 
     prefixMapAll = { map: prefixMapAll[0] };
     console.log(`getInter -> prefixMapAll`, prefixMapAll);
@@ -75,6 +76,7 @@ async function getInter(req, res) {
         }
       }
     }`;
+    console.log(`getInter -> query`, query);
 
     console.log(`boards -> boardId`, boardId);
     const result = await monday.api(query);
