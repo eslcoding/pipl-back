@@ -37,6 +37,7 @@ async function getPrefixMap(req, res) {
  */
 async function getInter(req, res) {
   const body = req.body;
+  console.log(`getInter -> body`, body);
   try {
     if (global.isReqOn) {
       await sleep(3000);

@@ -72,6 +72,10 @@ async function getPrefixMapByBoardId(boardId) {
     throw err;
   }
 }
+// (async () => {
+//   const map = await getPrefixMapByBoardId(1894876790);
+//   console.log(`map`, map);
+// })();
 /**
  * adds 1 to existing prefix or starts a new one
  * @param {string} prefix
