@@ -135,7 +135,9 @@ async function getInterItem(req, res) {
   try {
     const { shortLivedToken } = req.session;
     const { boardId, itemId } = body.payload.inboundFieldValues;
-    const prefixMap = await mondayService.getPrefixMapByBoardId(boardId);
+    const prefixMap = await mondayService.getPrefixMapByBoardId(
+      Number(boardId)
+    );
     const monday = initMondayClient();
     monday.setToken(shortLivedToken);
 
@@ -191,7 +193,9 @@ async function getWebHook(req, res) {
     const {
       label: { text },
     } = value;
-    const prefixMap = await mondayService.getPrefixMapByBoardId(boardId);
+    const prefixMap = await mondayService.getPrefixMapByBoardId(
+      Number(boardId)
+    );
     const nextPrefix = mondayService.getNextPrefixCount(text, prefixMap);
     const monday = initMondayClient();
     monday.setToken(token);
@@ -226,7 +230,9 @@ async function getWebHookItem(req, res) {
   try {
     // console.log('body.event: ', body.event);
     const { boardId, pulseId: itemId } = body.event;
-    const prefixMap = await mondayService.getPrefixMapByBoardId(boardId);
+    const prefixMap = await mondayService.getPrefixMapByBoardId(
+      Number(boardId)
+    );
     const monday = initMondayClient();
     monday.setToken(token);
 
@@ -281,7 +287,9 @@ async function getPrefixMapByBoardId(req, res) {
   // const { boardId } = req.params
   const { boardId } = req.body;
   try {
-    const prefixMap = await mondayService.getPrefixMapByBoardId(boardId);
+    const prefixMap = await mondayService.getPrefixMapByBoardId(
+      Number(boardId)
+    );
     res.json(prefixMap);
   } catch (err) {
     console.log("err: ", err);
@@ -292,7 +300,7 @@ async function getPrefixMapAll(req, res) {
   // const { boardId } = req.params
   const { boardId } = req.body;
   try {
-    const prefixMap = await mondayService.getPrefixMapAll(boardId);
+    const prefixMap = await mondayService.getPrefixMapAll(Number(boardId));
     res.json(prefixMap);
   } catch (err) {
     console.log("err: ", err);
