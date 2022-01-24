@@ -65,7 +65,6 @@ async function getInter(req, res) {
     console.log(`getInter -> prefixMapAll`, prefixMapAll);
 
     prefixMapAll = { map: prefixMapAll[0] };
-    console.log(`getInter -> prefixMapAll`, prefixMapAll);
     const monday = initMondayClient();
     monday.setToken(shortLivedToken);
 
@@ -81,12 +80,10 @@ async function getInter(req, res) {
     }`;
     console.log(`getInter -> query`, query);
 
-    console.log(`boards -> boardId`, boardId);
     const result = await monday.api(query);
     console.log(`getInter -> result`, result);
 
     const items = result.data.boards[0].items;
-    console.log(`getInter -> items`, items[0]);
     console.log(
       `getInter -> items[0].column_values[0]`,
       items[0].column_values[0]
